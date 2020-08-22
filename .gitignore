@@ -1,3 +1,4 @@
+__pycache__/
+expressions.csv
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
-expressions.csv
