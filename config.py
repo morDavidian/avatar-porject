@@ -15,3 +15,5 @@ output_filename = os.environ.get('OUTPUT_FILENAME') or 'expressions.csv'
 quat_domain = [-1, 1]
 blend_domain = [0, 100]
 blend_range = [0, 68]
+
+frame_num = 15
