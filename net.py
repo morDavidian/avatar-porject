@@ -4,16 +4,25 @@ import torch.nn.functional as F
 class Net(nn.Module):
     def __init__(self, in_num_of_features, out_num_of_features):
         super(Net, self).__init__()
-        self.fc1 = nn.Linear(in_num_of_features, 1024)
-        self.fc2 = nn.Linear(1024, 512)
-        self.fc3 = nn.Linear(512, 256)
-        self.fc4 = nn.Linear(256, 128)
-        self.fc5 = nn.Linear(128, out_num_of_features)
+        num_features = 4096
+        self.layers = []
+        self.layers.append(dict(
+            fc=nn.Linear(in_num_of_features, num_features//2),
+            bn=nn.BatchNorm1d(num_features=num_features//2),
+            dp=nn.Dropout(0.3)))
+        num_features //= 2
+
+        while (num_features >= 256):
+            self.layers.append(dict(
+                fc=nn.Linear(num_features, num_features//2),
+                bn=nn.BatchNorm1d(num_features=num_features//2),
+                dp=nn.Dropout(0.3)))
+            num_features //= 2
+
+        self.output_layer = nn.Linear(num_features, out_num_of_features) 
             
-    def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
-        x = F.relu(self.fc4(x))
-        x = self.fc5(x)
+    def forward(self, x): 
+        for l in self.layers:
+            x = F.leaky_relu(l["bn"](l["fc"](x)))
+        x = F.sigmoid(self.output_layer(x))
         return x
