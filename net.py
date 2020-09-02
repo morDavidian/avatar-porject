@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 def Net(in_num_of_features, out_num_of_features):
-    num_features = 2048
+    num_features = 512
     layers = []
     
     layers.append(nn.Linear(in_num_of_features, num_features))
